@@ -2,14 +2,24 @@ print("Hai :3")
 
 #Track Character Apperances
 
+def track_character_apperances():
+    pass
+
 #Map Relationships
+
+def track_character_relationships():
+    pass
 
 #Identify Major Event Intersections
 
+
+def track_major_events():
+    pass
+
 #Create Timeline
 
-
-
+def create_timeline():
+    pass
 
 #Main
 
