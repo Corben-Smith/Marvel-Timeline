@@ -1,3 +1,12 @@
+import requests
+import hashlib
+import time
+import certifi
+
+
+public_key = "06dc54a132a88b05fa414093b740157e"
+private_key = "c7db5d1723656554153ae4779bdc03fc62dcdaee"
+
 print("Hai :3")
 
 #Track Character Apperances
@@ -8,7 +17,18 @@ def track_character_apperances():
 #Map Relationships
 
 def track_character_relationships():
-    pass
+    ts = str(time.time())
+
+    to_hash = ts + private_key + public_key
+    hash = hashlib.md5(to_hash.encode()).hexdigest()
+    url = f"http://gateway.marvel.com/v1/public/characters?apikey={public_key}&ts={ts}&hash={hash}&nameStartsWith=S"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload, verify=False)
+
+    print(response.text)
 
 #Identify Major Event Intersections
 
