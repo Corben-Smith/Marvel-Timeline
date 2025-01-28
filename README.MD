@@ -32,3 +32,5 @@
 - API is located at https://developer.marvel.com/docs 
 - Query Params (some of the basics)
   - name: Returns only characters matching the specific value
+  - comics: Return only characters which appear in the specified comics
+  - series: Return only characters which appear in the specified series
