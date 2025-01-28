@@ -27,3 +27,8 @@
   - Release of comic data timeline
   - use some graphing module to create a timeline
   - use the comic/series date from API
+
+#### API Information
+- API is located at https://developer.marvel.com/docs 
+- Query Params (some of the basics)
+  - name: Returns only characters matching the specific value
