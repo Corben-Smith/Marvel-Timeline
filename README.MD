@@ -14,7 +14,7 @@
 - Determined the use of API
 - Develop a program that meets requirements
 
-####Notes: 
+#### Notes: 
 - Track Character Apperances: 
   - Use the stories attricute in API
 - Map Relationships:
