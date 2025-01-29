@@ -147,7 +147,70 @@ def track_major_events():
 #Create Timeline
 
 def create_timeline():
-    pass
+    ts = str(time.time())
+    to_hash = ts + private_key + public_key
+    hash = hashlib.md5(to_hash.encode()).hexdigest()
+    url = "http://gateway.marvel.com/v1/public/series"
+
+    params = {
+        "apikey": public_key,
+        "ts": ts,
+        "hash": hash,
+        "orderBy": "startYear",  # Sort by the start year of the series
+        "limit": 100  # You can adjust the limit as needed, e.g., 100 to pull more series
+    }
+
+    response = requests.get(url, params=params)
+    if response.status_code != 200:
+        print(f"Error: {response.status_code} - {response.text}")
+        return
+
+    data = response.json()
+    results = data.get("data", {}).get("results", [])
+
+    series = []
+    for serie in results:
+        title = serie.get("title", "Unknown Title")
+        start_year = serie.get("startYear", None)
+        if start_year and 0 <= start_year <= 1968:  # Ensure the series is within the date range
+            series.append({"title": title, "start_year": start_year})
+
+    if not series:
+        print("No series found for the specified date range.")
+        return
+    
+    # Group series by year
+    series_by_year = {}
+    for serie in series:
+        year = serie["start_year"]
+        if year not in series_by_year:
+            series_by_year[year] = []
+        series_by_year[year].append(serie["title"])
+
+    # Create timeline display
+    plt.figure(figsize=(12, 6))
+
+    # Plot each series on the timeline
+    for year, titles in series_by_year.items():
+        for i, title in enumerate(titles):
+            x_pos = year + (i * -400)  # Increased multiplier to 20 for wider spacing on the x-axis
+            plt.text(x_pos, 0.5, title, ha="center", va="center", fontsize=9, rotation=90)
+
+    plt.title("Marvel Series Timeline (1938-1968)", fontsize=14)
+    plt.xlabel("Year", fontsize=12)
+    plt.yticks([])  # Hide Y-axis
+    plt.grid(False)
+
+    # Adjust X-axis ticks dynamically based on range
+    plt.xticks(range(1938, 1970, 2))  # Set a range that fits your data (adjust the range as needed)
+
+    plt.tight_layout()
+    plt.show()
+
+# Run the function
+if __name__ == "__main__":
+    create_timeline()
+
 
 #Main
 
