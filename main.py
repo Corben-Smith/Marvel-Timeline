@@ -158,7 +158,7 @@ def dodge_points(points, offset=0.3):
         points[i][1] = year_counts[x] * offset
     return points
 
-def create_timeline():
+def create_timeline(start_year, end_year):
     ts = str(time.time())
     to_hash = ts + private_key + public_key
     hash = hashlib.md5(to_hash.encode()).hexdigest()
@@ -183,9 +183,9 @@ def create_timeline():
     series = []
     for serie in results:
         title = serie.get("title", "Unknown Title")
-        start_year = serie.get("startYear", None)
-        if start_year and 1938 <= start_year <= 1950:
-            series.append([start_year, 0, title])  # (year, y-position, title)
+        year_start = serie.get("startYear", None)
+        if year_start and start_year <= year_start <= end_year:
+            series.append([year_start, 0, title])  # (year, y-position, title)
 
     if not series:
         print("No series found for the specified date range.")
@@ -203,18 +203,26 @@ def create_timeline():
         plt.scatter(x, y, color='red', marker='o', s=50)  # Markers for visibility
         plt.text(x, y + 0.1, title, ha="center", fontsize=8, rotation=45)
 
-    plt.title("Marvel Series Timeline (1938-1968)", fontsize=14)
+    plt.title(f"Marvel Series Timeline ({start_year}-{end_year})", fontsize=14)
     plt.xlabel("Year", fontsize=12)
     plt.yticks([])  
     plt.grid(False)
 
-    plt.xticks(range(1938, 1950, 2))
+    plt.xticks(range(start_year, end_year, 2))
 
     plt.tight_layout()
     plt.show()
 
-# Run the function
+def create_timeline_diag():
+    print("Please provide the start year and end year you with you create a timeline of")
+    print("Provide Start Year:")
+    start_year = input()
+    print("Provide End Year:")
+    end_year = input()
 
+    create_timeline(start_year, end_year)
+
+    #we need to have the thing look for things that are the ocorrect yer
 #Main
 
 print("Choose which operation you want to do?")
@@ -239,7 +247,7 @@ elif ans == "3":
     track_major_events()
 
 elif ans == "4":
-    create_timeline()
+    create_timeline_diag()
 
 else:
     print("Invalid Input. Try again loser")
