@@ -39,6 +39,16 @@
 
 #### Problem Solving
 ###### This section explains how we went about understanding each aspect of the requirements. 
+  - Track character appearances
+    - We debated on if this meant appearances within each comic or just which comic
+    - We decided on which comics a character appears 
+  - Map relationships between characters
+    - We pretty much assumed this meant how characters interact with one abother (ex. who is in what comic together)
+  - Identify major event intersections
+    - We pretty much assumed this meant to determine which events had crossovers between comics or characters
+  - Generate visual timelines
+    - We debated on if this should be a list type visual or a traditional timeline
+    - We debated on if it should be in real world time by release date or in the timeline of the comics themselves 
 
 #### Challenges & Issues
 - Events functionality
