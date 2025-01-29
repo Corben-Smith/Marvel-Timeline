@@ -34,3 +34,10 @@
   - name: Returns only characters matching the specific value
   - comics: Return only characters which appear in the specified comics
   - series: Return only characters which appear in the specified series
+
+#### Challenges & Issues
+- Events functionality
+  - having issues with SSL certification
+  - Not being able to request anything to the API endpoint due to the SSL error.
+  - Creating a clean csv file about major Marvel events.
+
