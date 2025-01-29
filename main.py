@@ -2,7 +2,8 @@ import requests
 import hashlib
 import time
 from ConsoleEvents import main
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 public_key = "06dc54a132a88b05fa414093b740157e"
 private_key = "c7db5d1723656554153ae4779bdc03fc62dcdaee"
@@ -144,7 +145,18 @@ def track_character_relationships():
 def track_major_events():
     main()
 
-#Create Timeline
+def dodge_points(points, offset=0.3):
+    """
+    Adjusts y-values to prevent overlap.
+    """
+    year_counts = {}
+    for i, (x, y, title) in enumerate(points):
+        if x not in year_counts:
+            year_counts[x] = 0
+        else:
+            year_counts[x] += 1
+        points[i][1] = year_counts[x] * offset
+    return points
 
 def create_timeline():
     ts = str(time.time())
@@ -156,8 +168,8 @@ def create_timeline():
         "apikey": public_key,
         "ts": ts,
         "hash": hash,
-        "orderBy": "startYear",  # Sort by the start year of the series
-        "limit": 100  # You can adjust the limit as needed, e.g., 100 to pull more series
+        "orderBy": "startYear",
+        "limit": 100
     }
 
     response = requests.get(url, params=params)
@@ -172,45 +184,36 @@ def create_timeline():
     for serie in results:
         title = serie.get("title", "Unknown Title")
         start_year = serie.get("startYear", None)
-        if start_year and 0 <= start_year <= 1968:  # Ensure the series is within the date range
-            series.append({"title": title, "start_year": start_year})
+        if start_year and 1938 <= start_year <= 1950:
+            series.append([start_year, 0, title])  # (year, y-position, title)
 
     if not series:
         print("No series found for the specified date range.")
         return
-    
-    # Group series by year
-    series_by_year = {}
-    for serie in series:
-        year = serie["start_year"]
-        if year not in series_by_year:
-            series_by_year[year] = []
-        series_by_year[year].append(serie["title"])
 
-    # Create timeline display
+    series_array = np.array(series, dtype=object)
+
+    # Apply dodge points to shift y-positions
+    dodged_points = dodge_points(series_array.tolist())
+
     plt.figure(figsize=(12, 6))
 
-    # Plot each series on the timeline
-    for year, titles in series_by_year.items():
-        for i, title in enumerate(titles):
-            x_pos = year + (i * -400)  # Increased multiplier to 20 for wider spacing on the x-axis
-            plt.text(x_pos, 0.5, title, ha="center", va="center", fontsize=9, rotation=90)
+    # Plot series with dodged y-positions
+    for (x, y, title) in dodged_points:
+        plt.scatter(x, y, color='red', marker='o', s=50)  # Markers for visibility
+        plt.text(x, y + 0.1, title, ha="center", fontsize=8, rotation=45)
 
     plt.title("Marvel Series Timeline (1938-1968)", fontsize=14)
     plt.xlabel("Year", fontsize=12)
-    plt.yticks([])  # Hide Y-axis
+    plt.yticks([])  
     plt.grid(False)
 
-    # Adjust X-axis ticks dynamically based on range
-    plt.xticks(range(1938, 1970, 2))  # Set a range that fits your data (adjust the range as needed)
+    plt.xticks(range(1938, 1950, 2))
 
     plt.tight_layout()
     plt.show()
 
 # Run the function
-if __name__ == "__main__":
-    create_timeline()
-
 
 #Main
 
