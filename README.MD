@@ -35,6 +35,7 @@
   - comics: Return only characters which appear in the specified comics
   - series: Return only characters which appear in the specified series
   - events: Returns only characters which appear in the specified series 
+  - stories: Returns only characters which appear in specified series
 
 #### Challenges & Issues
 - Events functionality
