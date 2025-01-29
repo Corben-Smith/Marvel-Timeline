@@ -1,13 +1,20 @@
 import requests
 import hashlib
 import time
-import certifi
+from ConsoleEvents import main
 
 
 public_key = "06dc54a132a88b05fa414093b740157e"
 private_key = "c7db5d1723656554153ae4779bdc03fc62dcdaee"
 
 print("Hai :3")
+
+def format_character_counts(data):
+    result = "Character Appearances\n" + "-" * 25
+    for name, count in sorted(data.items(), key=lambda x: -x[1]):  # Sort by count descending
+        result += f"\n{name}: {count}"
+    return result
+
 
 def format_marvel_character(data):
     # Extract basic details
@@ -18,16 +25,21 @@ def format_marvel_character(data):
     resource_uri = data.get("resourceURI", "No resource URI available.")
     
     # Extract comics details
-    comics_available = data["comics"].get("available", 0) if "comics" in data else 0
-    comics_list = data["comics"].get("items", []) if "comics" in data else []
-    
-    # Format comics list
-    comics_str = ""
-    if comics_list:
-        comics_str = "\n".join([f"  - {comic.get('name', 'Unnamed Comic')}" for comic in comics_list])
-    else:
-        comics_str = "No comics available."
-    
+    comics_available = data.get("comics", {}).get("available", 0)
+    comics_list = data.get("comics", {}).get("items", [])
+
+    # Extract events details
+    events_available = data.get("events", {}).get("available", 0)
+    events_list = data.get("events", {}).get("items", [])
+
+    # Extract stories details
+    stories_available = data.get("stories", {}).get("available", 0)
+    stories_list = data.get("stories", {}).get("items", [])
+
+    # Format lists
+    def format_items(item_list):
+        return "\n".join([f"  - {item.get('name', 'Unnamed')}" for item in item_list]) if item_list else "No items available."
+
     # Create the formatted string
     result = f"""
 Marvel Character Details
@@ -39,10 +51,15 @@ Thumbnail: {thumbnail_url}
 Resource URI: {resource_uri}
 
 Comics ({comics_available} available):
-{comics_str}
+{format_items(comics_list)}
+
+Events ({events_available} available):
+{format_items(events_list)}
+
+Stories ({stories_available} available):
+{format_items(stories_list)}
     """
     return result.strip()
-
 
 #Track Character Apperances
 
@@ -50,9 +67,33 @@ def track_character_apperances():
     pass
 
 #Map Relationships
+def fetch_all_stories(character_id, private_key, public_key):
+    ts = str(time.time())
+    to_hash = ts + private_key + public_key
+    hash = hashlib.md5(to_hash.encode()).hexdigest()
+
+    base_url = "http://gateway.marvel.com/v1/public/stories"
+    stories = []
+    limit = 100  # Maximum allowed per request
+    offset = 0
+
+    while True:
+        url = f"{base_url}?apikey={public_key}&ts={ts}&hash={hash}&characters={character_id}&limit={limit}&offset={offset}"
+        response = requests.get(url, verify=False)
+        data = response.json()
+
+        new_stories = data["data"]["results"]
+        if not new_stories:
+            break  # Stop if no more stories
+
+        stories.extend(new_stories)
+        offset += limit  # Move to the next batch
+
+    return stories
+
 
 def track_character_relationships():
-    print("What is the name of the character? (Be specific friend)")
+    print("What is the name of the character? (Be specific, friend)")
     name = input()
     ts = str(time.time())
 
@@ -72,8 +113,29 @@ def track_character_relationships():
         data = response.json()
         if "data" in data and "results" in data["data"] and len(data["data"]["results"]) > 0:
             # Access the first character result
+
             character = data["data"]["results"][0]
-            print(format_marvel_character(character))
+            id = character["id"]
+
+            stories = fetch_all_stories(id, private_key, public_key)
+
+            counts = {}
+            for story in stories:
+                print("story:")
+                print(story)
+                print()
+                for character in story["characters"]["items"]:
+                    print("character:")
+                    print(character["name"])
+                    print()
+                    if character["name"] in counts:
+                        counts[character["name"]] = counts[character["name"]] + 1
+                    else:
+                        counts[character["name"]] = 1
+
+            print()
+            print(format_character_counts(counts))
+                    
         else:
             print("No characters found.")
             return
@@ -85,15 +147,10 @@ def track_character_relationships():
         print("Some error idc")
         return
     
-
-
-
-
 #Identify Major Event Intersections
 
-
 def track_major_events():
-    pass
+    main()
 
 #Create Timeline
 
@@ -101,7 +158,6 @@ def create_timeline():
     pass
 
 #Main
-
 
 print("Choose which operation you want to do?")
 print("")
