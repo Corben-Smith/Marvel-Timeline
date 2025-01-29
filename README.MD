@@ -37,6 +37,9 @@
   - events: Returns only characters which appear in the specified series 
   - stories: Returns only characters which appear in specified series
 
+#### Problem Solving
+###### This section explains how we went about understanding each aspect of the requirements. 
+
 #### Challenges & Issues
 - Events functionality
   - having issues with SSL certification
