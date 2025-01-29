@@ -67,6 +67,7 @@ def track_character_apperances():
     pass
 
 #Map Relationships
+
 def fetch_all_stories(character_id, private_key, public_key):
     ts = str(time.time())
     to_hash = ts + private_key + public_key
@@ -74,23 +75,23 @@ def fetch_all_stories(character_id, private_key, public_key):
 
     base_url = "http://gateway.marvel.com/v1/public/stories"
     stories = []
-    limit = 100  # Maximum allowed per request
+    limit = 100
     offset = 0
 
-    while True:
+    while offset < 50:
+        print(".")
         url = f"{base_url}?apikey={public_key}&ts={ts}&hash={hash}&characters={character_id}&limit={limit}&offset={offset}"
         response = requests.get(url, verify=False)
         data = response.json()
 
         new_stories = data["data"]["results"]
         if not new_stories:
-            break  # Stop if no more stories
+            break
 
         stories.extend(new_stories)
-        offset += limit  # Move to the next batch
+        offset += limit
 
     return stories
-
 
 def track_character_relationships():
     print("What is the name of the character? (Be specific, friend)")
@@ -108,11 +109,9 @@ def track_character_relationships():
 
 
     character = None
-        # Check for valid response
     if response.status_code == 200:
         data = response.json()
         if "data" in data and "results" in data["data"] and len(data["data"]["results"]) > 0:
-            # Access the first character result
 
             character = data["data"]["results"][0]
             id = character["id"]
@@ -121,19 +120,12 @@ def track_character_relationships():
 
             counts = {}
             for story in stories:
-                print("story:")
-                print(story)
-                print()
                 for character in story["characters"]["items"]:
-                    print("character:")
-                    print(character["name"])
-                    print()
                     if character["name"] in counts:
                         counts[character["name"]] = counts[character["name"]] + 1
                     else:
                         counts[character["name"]] = 1
 
-            print()
             print(format_character_counts(counts))
                     
         else:
