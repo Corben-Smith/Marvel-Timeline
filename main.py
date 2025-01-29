@@ -196,10 +196,10 @@ def create_timeline(start_year, end_year):
         except ValueError:
             continue  # Skip entries where startYear is invalid
 
-        if year_start >= start_year and year_start <= end_year:  # Compare integers
+        if year_start >= start_year and year_start <= end_year:  # Compare integersj
             series.append([year_start, 0, title])  # (year, y-position, title)
 
-    if not series:
+    if not series or len(series) <=0:
         print("No series found for the specified date range.")
         return
     series_array = np.array(series, dtype=object)
