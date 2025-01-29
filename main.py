@@ -164,6 +164,13 @@ def create_timeline(start_year, end_year):
     hash = hashlib.md5(to_hash.encode()).hexdigest()
     url = "http://gateway.marvel.com/v1/public/series"
 
+    try:
+        start_year = int(start_year)
+        end_year = int(end_year)
+    except ValueError:
+        print("Invalid year range provided.")
+        return
+
     params = {
         "apikey": public_key,
         "ts": ts,
@@ -183,14 +190,18 @@ def create_timeline(start_year, end_year):
     series = []
     for serie in results:
         title = serie.get("title", "Unknown Title")
-        year_start = serie.get("startYear", None)
-        if year_start and start_year <= year_start <= end_year:
+        start_year_str = str(serie.get("startYear", None))  # Ensure the startYear is a string
+        try:
+            year_start = int(start_year_str)  # Convert startYear to an integer
+        except ValueError:
+            continue  # Skip entries where startYear is invalid
+
+        if year_start >= start_year and year_start <= end_year:  # Compare integers
             series.append([year_start, 0, title])  # (year, y-position, title)
 
     if not series:
         print("No series found for the specified date range.")
         return
-
     series_array = np.array(series, dtype=object)
 
     # Apply dodge points to shift y-positions
