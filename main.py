@@ -65,6 +65,70 @@ Stories ({stories_available} available):
 #Track Character Apperances
 
 def track_character_apperances():
+    def track_character_apperances():
+
+    nam3 = ""
+    print ("This will get 5 stories with your character in it.")
+    nam3 = input ("Character name?\n")
+    
+    
+
+    ts = str(time.time())
+
+    to_hash = ts + private_key + public_key
+    hash = hashlib.md5(to_hash.encode()).hexdigest()
+    chara_url = f"http://gateway.marvel.com/v1/public/characters?apikey={public_key}&ts={ts}&hash={hash}&name={nam3}"
+    
+    payload = {}
+    headers = {}
+    response = requests.request("GET", chara_url, headers=headers, data=payload, verify=False)
+
+        # Check for valid response
+    if response.status_code == 200:
+        data = response.json()
+        results = data.get("data",{}).get("results",())
+        #gets the character id
+        if results:
+            character_id = results[0]["id"]
+            print(f"Character id:{character_id}")
+            # limit = 5
+            # offset = 0
+
+            ts = str(time.time())
+
+            to_hash = ts + private_key + public_key
+            hash = hashlib.md5(to_hash.encode()).hexdigest()
+
+            story_url = f"http://gateway.marvel.com/v1/public/stories?apikey={public_key}&ts={ts}&hash={hash}&characters={character_id}"
+
+            story_response =  requests.request("GET", story_url, headers=headers, data=payload, verify=False)
+
+            #this will get the story
+            if response.status_code == 200:
+
+                story_data = story_response.json()
+                new_results = story_data.get("data",{}).get("results",[])
+                if new_results:
+                    print(story_data)
+
+                else:
+                    print(results)
+                    print("character not found.")
+                    return
+            else:
+                 print(f"Error: {response.status_code} - {response.reason}")
+                 return
+
+
+
+        else:
+            print("character not found.")
+            return
+    else:
+        print(f"Error: {response.status_code} - {response.reason}")
+        return
+    
+  
     pass
 
 #Map Relationships
