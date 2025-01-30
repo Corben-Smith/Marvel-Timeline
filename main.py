@@ -89,9 +89,6 @@ def track_character_apperances():
         #gets the character id
         if results:
             character_id = results[0]["id"]
-            print(f"Character id:{character_id}")
-            # limit = 5
-            # offset = 0
 
             ts = str(time.time())
 
