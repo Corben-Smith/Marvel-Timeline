@@ -55,4 +55,5 @@
   - having issues with SSL certification
   - Not being able to request anything to the API endpoint due to the SSL error.
   - Creating a clean csv file about major Marvel events.
+  - getting the timeline to not cluster into one spot.
 
