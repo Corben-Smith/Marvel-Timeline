@@ -65,9 +65,8 @@ Stories ({stories_available} available):
 #Track Character Apperances
 
 def track_character_apperances():
-    def track_character_apperances():
 
-    nam3 = ""
+
     print ("This will get 5 stories with your character in it.")
     nam3 = input ("Character name?\n")
     
